@@ -61,8 +61,12 @@ ol.list ol{list-style:lower-alpha;margin:8px 0 0 26px}
 .eq .label{font:600 11px/1 'Segoe UI',Helvetica,Arial,sans-serif;letter-spacing:.14em;
   text-transform:uppercase;color:var(--accent);display:block;margin-bottom:8px}
 .eq code{font:15px/1.6 Consolas,Menlo,'Courier New',monospace;white-space:pre-wrap;color:var(--ink)}
-sup.fn{font-size:12px;line-height:0}
-sup.fn a{text-decoration:none;color:var(--accent);font-family:'Segoe UI',Helvetica,Arial,sans-serif}
+sup.fn{font-size:13.5px;line-height:0}
+sup.fn a{text-decoration:none;color:var(--accent);font-family:'Segoe UI',Helvetica,Arial,sans-serif;
+  font-weight:700;padding:2px 3px;border-radius:3px}
+sup.fn a::before{content:"["}
+sup.fn a::after{content:"]"}
+sup.fn a:hover{background:var(--eq-bg);text-decoration:underline}
 .footnotes{margin-top:70px;border-top:1px solid var(--rule);padding-top:24px}
 .footnotes .label{font:600 12px/1 'Segoe UI',Helvetica,Arial,sans-serif;letter-spacing:.14em;
   text-transform:uppercase;color:var(--muted);display:block;margin-bottom:16px}
@@ -73,6 +77,14 @@ sup.fn a{text-decoration:none;color:var(--accent);font-family:'Segoe UI',Helveti
 .endnote{margin-top:60px;padding:20px 24px;background:var(--eq-bg);font-size:15px;line-height:1.65;color:#3c3e46}
 .endnote a{white-space:nowrap}
 :target{scroll-margin-top:70px}
+.siteheader{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  max-width:64rem;margin:0 auto;padding:16px 22px;border-bottom:1px solid var(--rule)}
+.siteheader img{display:block;height:48px;width:auto}
+.siteheader nav{display:flex;flex-wrap:wrap;gap:4px 20px}
+.siteheader nav a{font:600 13px/1.4 'Segoe UI',Helvetica,Arial,sans-serif;letter-spacing:.02em;
+  color:var(--ink);text-decoration:none;padding:4px 0}
+.siteheader nav a:hover{color:var(--accent)}
+.siteheader nav a.current{border-bottom:2px solid var(--ink)}
 @media (max-width:600px){
   body{font-size:16.5px}
   h1{font-size:26px}
@@ -89,6 +101,18 @@ sup.fn a{text-decoration:none;color:var(--accent);font-family:'Segoe UI',Helveti
   <a class="home" href="/">Uncommon Core — Archive</a>
   <a class="pdf" href="/wp-content/uploads/2019/10/A-model-for-Bitcoins-security-and-the-declining-block-subsidy-v1.06.pdf" download>Download as PDF</a>
 </div>
+
+<header class="siteheader">
+  <a href="/" aria-label="Uncommon Core home"><img src="/wp-content/uploads/2019/01/cropped-logo4.jpg" alt="Uncommon Core" width="240" height="95"></a>
+  <nav aria-label="Site">
+    <a href="/">About</a>
+    <a href="/podcast/">Podcast</a>
+    <a href="/blog/">Blog</a>
+    <a href="/transcripts/">Transcripts</a>
+    <a href="/eip-1559/">EIP-1559 Guide</a>
+    <a class="current" href="/bitcoin-security-paper/" aria-current="page">Bitcoin block subsidy paper</a>
+  </nav>
+</header>
 
 <main>
 
