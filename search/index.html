@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search – Uncommon Core</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/wp-content/uploads/2019/01/cropped-small2.jpg" sizes="32x32">
+<link rel="stylesheet" href="/wp-content/uploads/elementor/google-fonts/css/montserrat.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#fff;color:#1d1f27;font:16px/1.7 'Montserrat',Helvetica,Arial,sans-serif}
+.banner{background:#1a1a2e;color:#eee;padding:14px 20px;text-align:center;font-family:Georgia,serif;font-size:16px;line-height:1.5}
+.banner a{color:#7fd1ff}
+.siteheader{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  max-width:64rem;margin:0 auto;padding:14px 22px;border-bottom:1px solid #e8e6e0}
+.siteheader img{display:block;width:125px;height:auto}
+.siteheader nav{display:flex;flex-wrap:wrap;align-items:center}
+.siteheader nav a{font:500 14px/1.4 'Montserrat',Helvetica,Arial,sans-serif;color:#000;text-decoration:none;
+  padding:10px 8px;margin-right:6px;border-bottom:2px solid transparent}
+.siteheader nav a:hover{border-bottom-color:#000}
+.siteheader nav a.current{border-bottom-color:#000}
+main{max-width:44rem;margin:0 auto;padding:50px 20px 90px}
+h1{font-size:26px;font-weight:600;margin-bottom:24px}
+#q{width:100%;font:400 18px/1.4 'Montserrat',Helvetica,Arial,sans-serif;padding:14px 16px;
+  border:2px solid #1d1f27;border-radius:4px;outline:none}
+#q:focus{border-color:#c4761a}
+#meta{color:#6b6e76;font-size:13px;margin:14px 2px}
+.hit{padding:18px 0;border-bottom:1px solid #eeece6}
+.hit a.t{font-size:17px;font-weight:600;color:#1d1f27;text-decoration:none}
+.hit a.t:hover{color:#c4761a}
+.hit .u{color:#6b6e76;font-size:12px;margin:3px 0 6px}
+.hit .s{font-family:Georgia,serif;font-size:15px;color:#3c3e46}
+mark{background:#f5e3c4;padding:0 1px}
+</style>
+</head>
+<body>
+<div class="banner">⚠️ This website is an archive (last update 2021). My current writing: <a href="https://hasu.blog">hasu.blog</a></div>
+<header class="siteheader">
+  <a href="/" aria-label="Uncommon Core home"><img src="/wp-content/uploads/2019/01/cropped-logo4.jpg" alt="Uncommon Core" width="240" height="95"></a>
+  <nav aria-label="Site">
+    <a href="/">About</a>
+    <a href="/podcast/">Podcast</a>
+    <a href="/blog/">Blog</a>
+    <a href="/transcripts/">Transcripts</a>
+    <a href="/eip-1559/">EIP-1559 Guide</a>
+    <a href="/research-paper-a-model-for-bitcoins-security-and-the-declining-block-subsidy/">Bitcoin block subsidy paper</a>
+    <a class="current" href="/search/" aria-current="page" aria-label="Search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true" style="vertical-align:-2px"><circle cx="10.5" cy="10.5" r="7"/><line x1="15.8" y1="15.8" x2="21" y2="21"/></svg></a>
+  </nav>
+</header>
+<main>
+<h1>Search the archive</h1>
+<input id="q" type="search" placeholder="Search all articles, transcripts and pages…" autofocus autocomplete="off">
+<div id="meta"></div>
+<div id="results"></div>
+<script>
+let IDX=null, t=null;
+const q=document.getElementById('q'), meta=document.getElementById('meta'), res=document.getElementById('results');
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function load(){ if(!IDX){ meta.textContent='Loading index…';
+  IDX=await (await fetch('/search-index.json')).json(); meta.textContent=''; } }
+function run(){
+  const terms=q.value.toLowerCase().split(/\s+/).filter(w=>w.length>1);
+  if(!terms.length){ res.innerHTML=''; meta.textContent=''; return; }
+  const hits=[];
+  for(const p of IDX){
+    const tl=p.t.toLowerCase(), xl=p.x.toLowerCase();
+    let score=0, ok=true;
+    for(const w of terms){
+      const inT=tl.split(w).length-1, inX=xl.split(w).length-1;
+      if(!inT&&!inX){ ok=false; break; }
+      score+=inT*20+inX;
+    }
+    if(ok) hits.push([score,p]);
+  }
+  hits.sort((a,b)=>b[0]-a[0]);
+  meta.textContent=hits.length? hits.length+' result'+(hits.length>1?'s':'') : 'No results.';
+  res.innerHTML=hits.slice(0,30).map(([s,p])=>{
+    const xl=p.x.toLowerCase(); let pos=-1;
+    for(const w of terms){ const i=xl.indexOf(w); if(i>=0&&(pos<0||i<pos)) pos=i; }
+    let snip=pos>=0? p.x.slice(Math.max(0,pos-70), pos+160) : p.x.slice(0,220);
+    snip=esc(snip);
+    for(const w of terms){ snip=snip.replace(new RegExp('('+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>'); }
+    return '<div class="hit"><a class="t" href="'+p.u+'">'+esc(p.t)+'</a><div class="u">uncommoncore.co'+p.u+'</div><div class="s">…'+snip+'…</div></div>';
+  }).join('');
+}
+q.addEventListener('input',async()=>{ await load(); clearTimeout(t); t=setTimeout(run,140); });
+q.addEventListener('focus',load,{once:true});
+</script>
+</main>
+</body>
+</html>
