@@ -90,10 +90,6 @@ n.querySelectorAll('a').forEach(function(a){var h=a.getAttribute('href');
 if(h===p||(h!=='/'&&p===h))a.classList.add('uc-current');
 if(h==='/'&&p==='/')a.classList.add('uc-current');});
 })();</script>
-
-
-
-
 <main>
 <h1>Search the archive</h1>
 <input autocomplete="off" autofocus="" id="q" placeholder="Search all articles, transcripts and pages…" type="search"/>
@@ -134,5 +130,5 @@ q.addEventListener('input',async()=>{ await load(); clearTimeout(t); t=setTimeou
 q.addEventListener('focus',load,{once:true});
 </script>
 </main>
-</body>
+<script async="" data-goatcounter="https://hasu.goatcounter.com/count" id="uc-analytics" src="//gc.zgo.at/count.js"></script></body>
 </html>
